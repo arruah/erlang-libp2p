@@ -47,12 +47,14 @@ init([TID, Opts]) ->
         intensity => 10,
         period => 10
     },
+    CacheWorker = ?WORKER(?CACHE, libp2p_cache, [TID]),
     Specs = [
-        ?WORKER(?CACHE, libp2p_cache, [TID])#{restart => transient},
-        ?WORKER(nat, libp2p_nat_server, [TID]),
-        ?WORKER(relay, libp2p_relay_server, [TID]),
-        ?WORKER(proxy, libp2p_proxy_server, [TID, libp2p_proxy:limit(Opts)])
-    ],
+    CacheWorker#{restart => transient},
+    ?WORKER(nat, libp2p_nat_server, [TID]),
+    ?WORKER(relay, libp2p_relay_server, [TID]),
+    ?WORKER(proxy, libp2p_proxy_server, [TID, libp2p_proxy:limit(Opts)])
+],
+
     {ok, {SupFlags, Specs}}.
 
 %%====================================================================
